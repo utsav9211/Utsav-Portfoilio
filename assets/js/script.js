@@ -1,90 +1,150 @@
-// ===== NAVBAR SCROLL EFFECT =====
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 50);
+'use strict';
+
+// ===== AVATAR UPLOAD =====
+const avatarBox = document.getElementById('avatar-box');
+const avatarUpload = document.getElementById('avatar-upload');
+const avatarImg = document.getElementById('avatar-img');
+
+// Load saved avatar from localStorage
+const savedAvatar = localStorage.getItem('portfolioAvatar');
+if (savedAvatar) {
+    avatarImg.src = savedAvatar;
+    avatarImg.style.display = 'block';
+    avatarBox.classList.remove('placeholder');
+}
+
+avatarBox.addEventListener('click', () => avatarUpload.click());
+
+avatarUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        avatarImg.src = event.target.result;
+        avatarImg.style.display = 'block';
+        avatarBox.classList.remove('placeholder');
+        localStorage.setItem('portfolioAvatar', event.target.result);
+    };
+    reader.readAsDataURL(file);
 });
 
-// ===== MOBILE MENU TOGGLE =====
-const hamburger = document.getElementById('hamburger');
-const navLinks = document.getElementById('nav-links');
+// ===== SIDEBAR CONTACTS TOGGLE =====
+const infoMoreBtn = document.getElementById('info-more-btn');
+const sidebarInfoMore = document.getElementById('sidebar-info-more');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navLinks.classList.toggle('open');
+infoMoreBtn.addEventListener('click', () => {
+    infoMoreBtn.classList.toggle('active');
+    sidebarInfoMore.classList.toggle('active');
+    infoMoreBtn.querySelector('span').textContent =
+        sidebarInfoMore.classList.contains('active') ? 'Hide Contacts' : 'Show Contacts';
 });
 
-// Close menu when a link is clicked
-navLinks.querySelectorAll('.nav-link').forEach(link => {
+// ===== PAGE NAVIGATION (Tab Switching) =====
+const navLinks = document.querySelectorAll('[data-nav-link]');
+const pages = document.querySelectorAll('[data-page]');
+
+navLinks.forEach(link => {
     link.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navLinks.classList.remove('open');
+        const targetPage = link.dataset.target;
+
+        // Update active nav link
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        // Show target page
+        pages.forEach(page => {
+            if (page.dataset.page === targetPage) {
+                page.classList.add('active');
+            } else {
+                page.classList.remove('active');
+            }
+        });
+
+        // Scroll to top of main content
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 });
 
-// ===== ACTIVE NAV LINK ON SCROLL =====
-const sections = document.querySelectorAll('section[id]');
-const navLinksList = document.querySelectorAll('.nav-link');
+// ===== PORTFOLIO FILTER =====
+const filterBtns = document.querySelectorAll('[data-filter]');
+const projectItems = document.querySelectorAll('.project-item');
 
-function highlightNav() {
-    const scrollY = window.scrollY + 100;
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.offsetHeight;
-        const sectionId = section.getAttribute('id');
-        if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-            navLinksList.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + sectionId) {
-                    link.classList.add('active');
-                }
-            });
-        }
-    });
-}
-window.addEventListener('scroll', highlightNav);
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
 
-// ===== SCROLL TO TOP BUTTON =====
-const scrollTopBtn = document.getElementById('scroll-top');
-window.addEventListener('scroll', () => {
-    scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
-});
-scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
 
-// ===== SCROLL REVEAL (Fade-in) =====
-function revealElements() {
-    const elements = document.querySelectorAll('.fade-in');
-    elements.forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight - 60) {
-            el.classList.add('visible');
-        }
-    });
-}
-
-// Add fade-in class to animatable elements
-document.addEventListener('DOMContentLoaded', () => {
-    const animateSelectors = [
-        '.about-content',
-        '.skill-category',
-        '.project-card',
-        '.timeline-item',
-        '.education-card',
-        '.contact-grid'
-    ];
-    animateSelectors.forEach(selector => {
-        document.querySelectorAll(selector).forEach(el => {
-            el.classList.add('fade-in');
+        projectItems.forEach(item => {
+            if (filter === 'all' || item.dataset.category === filter) {
+                item.classList.remove('hidden');
+            } else {
+                item.classList.add('hidden');
+            }
         });
     });
-
-    // Initial check
-    revealElements();
 });
 
-window.addEventListener('scroll', revealElements);
+// ===== TYPING ANIMATION =====
+const typingEl = document.getElementById('typing-title');
+if (typingEl) {
+    const roles = ['Software Developer', 'ML Engineer', 'Full-Stack Dev'];
+    let roleIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
 
-// ===== CONTACT FORM (FormSubmit.co) =====
-// The form submits directly via HTML action to FormSubmit.co
-// No extra JS needed — it handles everything server-side.
+    function typeEffect() {
+        const current = roles[roleIndex];
+        typingEl.textContent = current.substring(0, charIndex);
+
+        if (!isDeleting) {
+            charIndex++;
+            if (charIndex > current.length) {
+                isDeleting = true;
+                setTimeout(typeEffect, 1500);
+                return;
+            }
+        } else {
+            charIndex--;
+            if (charIndex === 0) {
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+            }
+        }
+
+        const speed = isDeleting ? 50 : 100;
+        setTimeout(typeEffect, speed);
+    }
+
+    typeEffect();
+}
+
+// ===== CONTACT FORM (AJAX) =====
+const contactForm = document.getElementById('contact-form');
+const formSuccess = document.getElementById('form-success');
+
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const formData = new FormData(contactForm);
+
+        fetch(contactForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                contactForm.style.display = 'none';
+                formSuccess.style.display = 'block';
+            }
+        })
+        .catch(() => {
+            contactForm.style.display = 'none';
+            formSuccess.style.display = 'block';
+        });
+    });
+}
