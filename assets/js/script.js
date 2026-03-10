@@ -1,34 +1,5 @@
 'use strict';
 
-// ===== AVATAR UPLOAD =====
-const avatarBox = document.getElementById('avatar-box');
-const avatarUpload = document.getElementById('avatar-upload');
-const avatarImg = document.getElementById('avatar-img');
-
-// Load saved avatar from localStorage
-const savedAvatar = localStorage.getItem('portfolioAvatar');
-if (savedAvatar) {
-    avatarImg.src = savedAvatar;
-    avatarImg.style.display = 'block';
-    avatarBox.classList.remove('placeholder');
-}
-
-avatarBox.addEventListener('click', () => avatarUpload.click());
-
-avatarUpload.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file || !file.type.startsWith('image/')) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        avatarImg.src = event.target.result;
-        avatarImg.style.display = 'block';
-        avatarBox.classList.remove('placeholder');
-        localStorage.setItem('portfolioAvatar', event.target.result);
-    };
-    reader.readAsDataURL(file);
-});
-
 // ===== SIDEBAR CONTACTS TOGGLE =====
 const infoMoreBtn = document.getElementById('info-more-btn');
 const sidebarInfoMore = document.getElementById('sidebar-info-more');
