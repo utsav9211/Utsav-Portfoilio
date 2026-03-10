@@ -185,7 +185,7 @@ if (contactForm) {
 // ===== 3D ANIMAL CURSOR FOLLOWER =====
 const animal = document.createElement('div');
 animal.id = 'cursor-animal';
-animal.innerHTML = '<img src="ChatGPT Image Mar 10, 2026, 11_39_38 AM.png" alt="My 3D Character" style="width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 0 12px #64ffda); transition: transform 0.1s; transform-origin: center;">'; // Neon glow cursor follower!
+animal.innerHTML = '<img src="assets/images/3d-avatar.png" alt="My 3D Character" style="width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 0 12px #64ffda); transition: transform 0.1s; transform-origin: center;">'; // Neon glow cursor follower!
 document.body.appendChild(animal);
 
 let mouseX = window.innerWidth / 2;
