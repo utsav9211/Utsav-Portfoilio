@@ -123,7 +123,7 @@ body {
 }
 
 .avatar-box img {
-    width: 100%;
+    width: 85%;
     height: 100%;
     object-fit: cover;
     border-radius: 20px;
@@ -193,17 +193,25 @@ body {
     transition: all var(--transition);
     margin-top: 8px;
     text-decoration: none;
+    animation: pulseGlow 2s infinite;
 }
 
 .resume-btn:hover {
-    background: var(--accent-dark);
+    background: #5cffd2;
     color: var(--bg-main) !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(100, 255, 218, 0.3);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 6px 20px rgba(100, 255, 218, 0.5);
+    animation: none;
+}
+
+.resume-btn:hover svg {
+    transform: translateY(3px);
+    transition: transform 0.3s ease;
 }
 
 .resume-btn svg {
     fill: var(--bg-main);
+    transition: transform 0.3s ease;
 }
 
 .info-more-btn {
@@ -386,6 +394,29 @@ body {
 }
 
 /* ===== PAGE ARTICLES ===== */
+/* ===== CUSTOM ANIMATIONS & UPGRADES ===== */
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(100, 255, 218, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(100, 255, 218, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(100, 255, 218, 0); }
+}
+
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 .page {
     display: none;
     background: var(--bg-card);
@@ -393,7 +424,7 @@ body {
     border-radius: var(--radius);
     padding: 30px;
     box-shadow: var(--shadow);
-    animation: slideIn 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 .page.active {
@@ -673,12 +704,24 @@ body {
     font-weight: 500;
     border: 1px solid rgba(100, 255, 218, 0.2);
     transition: all var(--transition);
+    opacity: 0;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
+
+/* Stagger skill tags automatically without JS */
+.skill-tags .skill-tag:nth-child(1) { animation-delay: 0.1s; }
+.skill-tags .skill-tag:nth-child(2) { animation-delay: 0.2s; }
+.skill-tags .skill-tag:nth-child(3) { animation-delay: 0.3s; }
+.skill-tags .skill-tag:nth-child(4) { animation-delay: 0.4s; }
+.skill-tags .skill-tag:nth-child(5) { animation-delay: 0.5s; }
+.skill-tags .skill-tag:nth-child(6) { animation-delay: 0.6s; }
+.skill-tags .skill-tag:nth-child(n+7) { animation-delay: 0.7s; }
 
 .skill-tag:hover {
     background: rgba(100, 255, 218, 0.2);
     border-color: var(--accent);
-    transform: translateY(-2px);
+    transform: translateY(-4px) scale(1.05); /* more dynamic hover */
+    box-shadow: 0 4px 10px rgba(100, 255, 218, 0.2);
 }
 
 /* ===== FILTER TABS ===== */
@@ -751,6 +794,7 @@ body {
 }
 
 .project-img {
+    position: relative;
     width: 100%;
     height: 180px;
     display: flex;
@@ -762,8 +806,31 @@ body {
     transition: transform 0.4s ease;
 }
 
+/* Hover overlay element */
+.project-img::after {
+    content: "View Project \\2728"; /* Rocket icon or sparkle */
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 12, 12, 0.85); /* Deep dark overlay fitting theme */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    opacity: 0;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(2px);
+    transform: translateY(20px);
+}
+
 .project-item:hover .project-img {
-    transform: scale(1.05);
+    transform: scale(1.05); /* Slight zoom on image */
+}
+
+.project-item:hover .project-img::after {
+    opacity: 1;
+    transform: translateY(0); /* Slide up while fading in */
 }
 
 .project-img img {
@@ -938,8 +1005,24 @@ textarea.form-input {
 
 /* ===== TYPING ANIMATION ===== */
 .sidebar .title {
+    position: relative;
+    display: inline-block;
     min-width: 140px;
     min-height: 26px;
+    padding-right: 8px; /* space for cursor */
+}
+
+.sidebar .title::after {
+    content: '|';
+    position: absolute;
+    right: 0;
+    color: var(--accent);
+    animation: blinkCursor 0.8s step-end infinite;
+}
+
+@keyframes blinkCursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 /* ===== FOOTER ===== */
