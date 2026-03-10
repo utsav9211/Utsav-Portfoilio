@@ -188,32 +188,36 @@ animal.id = 'cursor-animal';
 animal.innerHTML = '<img src="assets/images/3d-avatar.png" alt="My 3D Character" style="width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 0 12px #64ffda); transition: transform 0.1s; transform-origin: center;">'; // Neon glow cursor follower!
 document.body.appendChild(animal);
 
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
-let animalX = mouseX;
-let animalY = mouseY;
+let mouseClientX = window.innerWidth / 2;
+let mouseClientY = window.innerHeight / 2;
+let animalX = mouseClientX;
+let animalY = mouseClientY;
 let isMoving = false;
 
 window.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY + window.scrollY; // adjust for scroll
+    mouseClientX = e.clientX;
+    mouseClientY = e.clientY;
     isMoving = true;
 });
 
-// Update animal Y pos when scrolling
-window.addEventListener('scroll', () => {
-    // Keep it physically near where the mouse is on the page
-    mouseY = window.event ? window.event.clientY + window.scrollY : mouseY;
-});
-
 function animateAnimal() {
+    // Check if on mobile to skip calculations (CSS already hides it)
+    if (window.innerWidth <= 1024) {
+        requestAnimationFrame(animateAnimal);
+        return;
+    }
+
+    // Calculate target positions including current scroll
+    let targetX = mouseClientX;
+    let targetY = mouseClientY + window.scrollY;
+
     // Calculate distance
-    let dx = mouseX - animalX;
-    let dy = mouseY - animalY;
+    let dx = targetX - animalX;
+    let dy = targetY - animalY;
     
-    // Smooth interpolation (easing)
-    animalX += dx * 0.1;
-    animalY += dy * 0.1;
+    // Smooth interpolation (easing) - lowered to make character follow smoothly and slower behind the cursor
+    animalX += dx * 0.04;
+    animalY += dy * 0.04;
     
     // Calculate 3D movements
     // If moving down, it points down. If moving up, points up.

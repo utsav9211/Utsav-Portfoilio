@@ -39,7 +39,7 @@ body {
         radial-gradient(circle at 80% 80%, rgba(100, 255, 218, 0.02) 0%, transparent 50%);
     color: var(--text);
     line-height: 1.7;
-    overflow-x: hidden;
+    overflow-x: clip; /* Fix for mobile horizontal scroll */
     padding: 15px 12px;
     min-height: 100vh;
 }
@@ -1071,6 +1071,10 @@ textarea.form-input {
 
     .footer {
         position: relative;
+    }
+
+    #cursor-animal {
+        display: none !important;
     }
 }
 
