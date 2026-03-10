@@ -424,22 +424,11 @@ body {
     border-radius: var(--radius);
     padding: 30px;
     box-shadow: var(--shadow);
-    animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 .page.active {
     display: block;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 /* ===== TYPOGRAPHY ===== */
