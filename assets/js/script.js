@@ -48,26 +48,54 @@ infoMoreBtn.addEventListener('click', () => {
 // ===== PAGE NAVIGATION (Tab Switching) =====
 const navLinks = document.querySelectorAll('[data-nav-link]');
 const pages = document.querySelectorAll('[data-page]');
+const overlay = document.getElementById('page-transition');
 
 navLinks.forEach(link => {
     link.addEventListener('click', () => {
         const targetPage = link.dataset.target;
+        
+        // Prevent re-clicking the same active link
+        if (link.classList.contains('active')) return;
 
-        // Update active nav link
-        navLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
+        // Trigger transition overlay
+        if (overlay) {
+            overlay.classList.add('active');
+            
+            setTimeout(() => {
+                // Update active nav link
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
 
-        // Show target page
-        pages.forEach(page => {
-            if (page.dataset.page === targetPage) {
-                page.classList.add('active');
-            } else {
-                page.classList.remove('active');
-            }
-        });
+                // Show target page
+                pages.forEach(page => {
+                    if (page.dataset.page === targetPage) {
+                        page.classList.add('active');
+                    } else {
+                        page.classList.remove('active');
+                    }
+                });
 
-        // Scroll to top of main content
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Scroll to top of main content
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                
+                // Hide overlay after switching
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                }, 200); // short delay to show the new page rendering before pulling back
+            }, 600); // 600ms matches the slide down animation duration in CSS
+        } else {
+            // Fallback if no overlay
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            pages.forEach(page => {
+                if (page.dataset.page === targetPage) {
+                    page.classList.add('active');
+                } else {
+                    page.classList.remove('active');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     });
 });
 
@@ -153,3 +181,53 @@ if (contactForm) {
         });
     });
 }
+
+// ===== 3D ANIMAL CURSOR FOLLOWER =====
+const animal = document.createElement('div');
+animal.id = 'cursor-animal';
+animal.textContent = '🐕'; // A cute dog that follows you!
+document.body.appendChild(animal);
+
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+let animalX = mouseX;
+let animalY = mouseY;
+let isMoving = false;
+
+window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY + window.scrollY; // adjust for scroll
+    isMoving = true;
+});
+
+// Update animal Y pos when scrolling
+window.addEventListener('scroll', () => {
+    // Keep it physically near where the mouse is on the page
+    mouseY = window.event ? window.event.clientY + window.scrollY : mouseY;
+});
+
+function animateAnimal() {
+    // Calculate distance
+    let dx = mouseX - animalX;
+    let dy = mouseY - animalY;
+    
+    // Smooth interpolation (easing)
+    animalX += dx * 0.1;
+    animalY += dy * 0.1;
+    
+    // Calculate 3D movements
+    // If moving down, it points down. If moving up, points up.
+    let rotateX = dy * 0.15; // Vertical rotation
+    // Flip horizontally based on X direction
+    let scaleX = dx < 0 ? -1 : 1; 
+    let rotateZ = dx < 0 ? -dy * 0.05 : dy * 0.05;
+
+    // Apply movement with 3D transforms
+    // Offset by 20px so it's slightly bottom-right of the actual cursor
+    animal.style.transform = `translate3d(${animalX + 20}px, ${animalY + 20}px, 0) scaleX(${scaleX}) rotateX(${rotateX}deg) rotateZ(${rotateZ}deg)`;
+    
+    requestAnimationFrame(animateAnimal);
+}
+
+// Start animation loop
+animateAnimal();
