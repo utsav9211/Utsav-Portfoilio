@@ -1,5 +1,39 @@
 'use strict';
 
+// ===== 3D AVATAR TILT EFFECT =====
+const avatarBox = document.getElementById('avatar-box');
+
+if (avatarBox) {
+    avatarBox.addEventListener('mousemove', (e) => {
+        const { left, top, width, height } = avatarBox.getBoundingClientRect();
+        
+        // Calculate mouse position relative to the center of the image
+        const x = e.clientX - left;
+        const y = e.clientY - top;
+        
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        // Calculate tilt amounts (max 15 degrees)
+        const tiltX = ((y - centerY) / centerY) * -15; 
+        const tiltY = ((x - centerX) / centerX) * 15;
+        
+        // Apply 3D transformation
+        avatarBox.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.05, 1.05, 1.05)`;
+    });
+
+    avatarBox.addEventListener('mouseleave', () => {
+        // Reset the transformation when mouse leaves
+        avatarBox.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        avatarBox.style.transition = `transform 0.5s ease`;
+    });
+
+    avatarBox.addEventListener('mouseenter', () => {
+        // Remove the transition lag immediately so it follows the mouse instantly
+        avatarBox.style.transition = `transform 0.1s ease`;
+    });
+}
+
 // ===== SIDEBAR CONTACTS TOGGLE =====
 const infoMoreBtn = document.getElementById('info-more-btn');
 const sidebarInfoMore = document.getElementById('sidebar-info-more');
